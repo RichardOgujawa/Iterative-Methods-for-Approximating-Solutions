@@ -4,7 +4,7 @@ import numpy as np
 def main():
     # Prompt the user to create the coefficient matrix, or use the default which is set manually below
     A, n, use_default_matrix = create_coefficient_matrix()
-    # Based on what they chose to do above, they will either be prompted to create the constants vector or we will continue with the default constants vector
+    # Based on what they chose to do above, they will either be prompted to create the constants vector or will continue with the default constants vector
     b = create_constants_vector(n, use_default_matrix)
     # Get the rows from the matrix
     rows = A.shape[0]
@@ -12,7 +12,7 @@ def main():
     E_MARG = 0.001
     # The error margin as a matrix
     E_MARG_MATRIX = np.array([E_MARG for _ in range(rows)])
-    # Set the max number of iteraions we're willing to compute
+    # Set the max number of iteraions
     MAX_ITERATIONS = 10
 
     # Call the Jacobi method
@@ -52,7 +52,7 @@ def jacobi(A, b, E_MARG_MATRIX, MAX_ITERATIONS):
         # Keep iterating as long as the error margins are greater than the acceptable error margin
         j_condition = np.all(j_err_x > E_MARG_MATRIX)
 
-        # If we get to j_iteration_count gets as far as the max number of iterations
+        # Stop if j_iteration_count gets as far as the max number of iterations
         if j_iteration_count == MAX_ITERATIONS:
             j_condition = False
             print(
@@ -64,10 +64,6 @@ def jacobi(A, b, E_MARG_MATRIX, MAX_ITERATIONS):
 
     print(f"*** CONVERGED IN {j_iteration_count - 1} ITERATIONS ***")
 
-
-# Have the number of zeros in the initial guess matrix match the number of variables (rows in A)
-
-# Iteration count to keep track of how many steps were needed to solve the system
 
 def gauss_seidel(A, b, E_MARG, MAX_ITERATIONS):
 
@@ -86,7 +82,7 @@ def gauss_seidel(A, b, E_MARG, MAX_ITERATIONS):
         x_old = x.copy()
 
         # !!!HOW THE LOOP WORKS
-        # We're updating each component of the solution vector independently.
+        # It's updating each component of the solution vector independently.
         # The formula has a first summation term and second summation term. The first summation term, which in python looks like 'np.dot(A[i, :i], x[:i])'
         # The first summation term will multiply out the coefficients from A with the updated solutions from x
         # FIRST SUMMATION TERM -------------------------------
@@ -97,8 +93,8 @@ def gauss_seidel(A, b, E_MARG, MAX_ITERATIONS):
         #    A[i, [i+1]:] goes into the ith row and selects all of the components that haven't yet been updated
         #    x[(i+1):] selects the solutions that haven't yet been updated
         #    The dot product of the two gives us the contribution of the yet-to-be-updated solution(s)
-        # We minus these two to see the change in the two estimates for the solution, at a certain point the change in this value will be so small that the entire vectors for the previous and updated solutions will be close enough to claim convergence, depending on our pre-defined error margin (E_MARG)
-        # Finally we divide across by A[i, i] to isolate each variable
+        # Minus these (first and second summation terms) two to see the change in the two estimates for the solution, at a certain point the change in this value will be so small that the entire vectors for the previous and updated solutions will be close enough to claim convergence, depending on our pre-defined error margin (E_MARG)
+        # Finally divide across by A[i, i] to isolate each variable
         for i in range(rows):
             x[i] = (b[i] - np.dot(A[i, :i], x[:i]) -
                     np.dot(A[i, (i+1):], x_old[(i+1):])) / A[i, i]
@@ -166,7 +162,7 @@ def create_constants_vector(n, use_default_matrix):
             for j in range(cols):
                 b[i, j] = int(
                     input("Which element do you want to put at position A{}? ".format([i, j])))
-        # A 2d array is created, here we're flattening it to a 1d array before printing and returning it.
+        # A 2d array is created, flatten it out to a 1d array before printing and returning it.
         print(f"*** YOUR CONSTANT VECTOR IS: {b.flatten()} ***")
         return b.flatten()
 
